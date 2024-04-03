@@ -33,7 +33,8 @@ public struct PostgresBridge: ContextBridgeable {
     }
     
     public func transaction<T>(to db: DatabaseIdentifier,
-                               _ closure: @escaping (PostgresConnection) -> EventLoopFuture<T>) -> EventLoopFuture<T> {
+                               _ closure: @escaping (PostgresConnection) -> EventLoopFuture<T>
+    ) -> EventLoopFuture<T> {
         context.bridge.transaction(to: db, on: context.eventLoop, closure)
     }
     
@@ -72,7 +73,8 @@ public final class PBR: Bridgeable {
     /// Gives a connection to the database and releases it automatically in both success and error cases
     public func connection<T>(to db: DatabaseIdentifier,
                               on eventLoop: EventLoop,
-                              _ closure: @escaping (PostgresConnection) -> EventLoopFuture<T>) -> EventLoopFuture<T> {
+                              _ closure: @escaping (PostgresConnection) -> EventLoopFuture<T>
+    ) -> EventLoopFuture<T> {
         self.db(db, on: eventLoop).withConnection { closure($0) }
     }
     

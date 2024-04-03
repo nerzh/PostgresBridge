@@ -15,21 +15,27 @@ public struct PostgresConnectionSource: BridgesPoolSource {
         } catch {
             return eventLoop.makeFailedFuture(error)
         }
+        
         return PostgresConnection.connect(
             to: address,
             tlsConfiguration: self.db.host.tlsConfiguration,
             logger: logger,
             on: eventLoop
         ).flatMap { conn in
-            conn.authenticate(
+            #warning("Because the Swift out of mind")
+            let fuckingSwiftAmbigous: @Sendable (Error) throws -> Void = { error in
+                #warning("Because the Swift out of mind again")
+                let future: EventLoopFuture<Void> = conn.close()
+                _ = future
+                throw error
+            }
+            
+            return conn.authenticate(
                 username: self.db.host.username,
                 database: self.db.name,
                 password: self.db.host.password,
                 logger: logger
-            ).flatMapErrorThrowing { error in
-                _ = conn.close()
-                throw error
-            }.map { conn }
+            ).flatMapErrorThrowing(fuckingSwiftAmbigous).map { conn }
         }
     }
     

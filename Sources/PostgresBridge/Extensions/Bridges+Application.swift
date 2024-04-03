@@ -9,7 +9,7 @@ import Bridges
 
 extension BridgesApplication {
     public var postgres: PostgresBridge {
-        .init(bridges.bridge(to: PBR.self, on: eventLoopGroup.next()))
+        .init(bridges.bridge(to: PBR.self, on: eventLoopGroup.any()))
     }
 }
 
